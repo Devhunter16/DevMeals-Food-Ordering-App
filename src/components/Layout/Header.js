@@ -4,12 +4,12 @@ import classes from "./Header.module.css";
 const Header = (props) => {
   return (
     <>
-      <header>
+      <header className={classes.header}>
         <h1>DevMeals</h1>
         <button>Cart</button>
       </header>
-      <div>
-        <img src={mealsImage} />
+      <div className={classes["main-image"]}>
+        <img src={mealsImage} alt="A table full of food." />
       </div>
     </>
   );

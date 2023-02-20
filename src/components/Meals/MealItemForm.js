@@ -3,7 +3,7 @@ import Input from "../UI/Input";
 
 // Passing in an object named input with a bunch of key-value value pairs that we
 // will pass to our Input
-const MealItemForm = () => {
+const MealItemForm = (props) => {
   return (
     <form className={classes.form}>
       <Input

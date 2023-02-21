@@ -16,6 +16,8 @@ function App() {
     setCartVisibility(false);
   };
 
+  // Wrapping our app in <CartProvider> so that it has access to all
+  // of the context values from that custom component
   return (
     <CartProvider>
       {cartIsShown && <Cart onClose={setCartInvisible}/>}

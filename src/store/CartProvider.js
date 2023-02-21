@@ -28,8 +28,7 @@ const CartProvider = (props) => {
     // Passing cartContext to CartContext.Provider so that all of the
     // values within our cartContext object are passed to any components
     // we want to wrap in our CartProvider component.
-    return
-    (
+    return (
         <CartContext.Provider value={cartContext}>
             {props.children}
         </CartContext.Provider>

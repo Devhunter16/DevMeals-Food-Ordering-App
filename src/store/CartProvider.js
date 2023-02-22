@@ -14,13 +14,33 @@ const defaultCartState = {
 // is dispatched by you later in your code.
 const cartReducer = (state, action) => {
   if (action.type === "ADD_ITEM") {
-    // The .concat() method is like .push() but it creates a new array
-    // so that we don't mess with the old state snapshot because we don't
-    // want to mess with existing data and memory without react knowing
-    // about it.
-    const updatedItems = state.items.concat(action.item);
     const updatedTotalAmount =
       state.totalAmount + action.item.price * action.item.amount;
+
+    // findIndex() is a built in JS method that finds the index of an
+    // element within an array. It takes a function which returns true
+    // if it finds the item we're looking for and false otherwise.
+    const existingCartItemIndex = state.items.findIndex(
+      (item) => item.id === action.item.id
+    );
+    const existingCartItem = state.items[existingCartItemIndex];
+    let updatedItems;
+
+    if (existingCartItem) {
+      const updatedItem = {
+        ...existingCartItem,
+        amount: existingCartItem.amount + action.item.amount,
+      };
+      updatedItems = [...state.items];
+      updatedItems[existingCartItemIndex] = updatedItem;
+    } else {
+      // The .concat() method is like .push() but it creates a new array
+      // so that we don't mess with the old state snapshot because we don't
+      // want to mess with existing data and memory without react knowing
+      // about it.
+      updatedItems = state.items.concat(action.item);
+    }
+
     return {
       items: updatedItems,
       totalAmount: updatedTotalAmount,

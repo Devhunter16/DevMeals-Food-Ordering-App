@@ -7,16 +7,18 @@ import CartContext from "../../store/cart-context";
 
 const Cart = (props) => {
   const cartCtx = useContext(CartContext);
-
   const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
   const hasItems = cartCtx.items.length > 0;
 
-  const cartItemRemoveHandler = (id) => {
-
-  }
-
   const cartItemAddHandler = (item) => {
+    // See the cartProvider file for more context on this. This line
+    // of code essentially allows us to use the "plus" button in the
+    // cart to increment the amount of a certain type of item.
+    cartCtx.addItem({...item, amount: 1});
+  };
 
+  const cartItemRemoveHandler = (id) => {
+    cartCtx.removeItem(id);
   }
 
   const cartItems = (

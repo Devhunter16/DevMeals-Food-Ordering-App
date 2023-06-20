@@ -8,6 +8,8 @@ import Checkout from "./Checkout";
 
 const Cart = (props) => {
   const [isCheckout, setIsCheckout] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [didSubmit, setDidSubmit] = useState(false);
   const cartCtx = useContext(CartContext);
   const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
   const hasItems = cartCtx.items.length > 0;
@@ -27,6 +29,30 @@ const Cart = (props) => {
     setIsCheckout(true);
   };
 
+  // Sends the form data in the Checkout component to our database for storage. We
+  // added orders.json to the end so that it will create a new node called "orders"
+  // to store the user data in.
+  const submitOrderHandler = async (userData) => {
+    // We've begun submitting, so setting isSubmitting to true.
+    setIsSubmitting(true);
+    // Specifiying that this is a POST request. Also calling JSON.stringify({}) on the
+    // body because we need to turn our strings into JSON to send them to the db.
+    await fetch('https://react-http-1b7e7-default-rtdb.firebaseio.com/orders.json', {
+      method: 'POST',
+      body: JSON.stringify({
+        // All of the user's data from the form such as street address, name, etc.
+        user: userData,
+        // All of the items in the cart order.
+        orderedItems: cartCtx.items
+      })
+    });
+    // We're done submitting now, so setting isSubmitting to false.
+    setIsSubmitting(false);
+    setDidSubmit(true);
+    // Clearing the cart and closing the modal after submitting.
+    cartCtx.clearCart();
+  };
+
   const cartItems = (
     // Mapping each cart item to a custom CartItem element within a <ul> element 
     // to make an unordered list of CartItems
@@ -35,7 +61,7 @@ const Cart = (props) => {
       {cartCtx.items.map((item) => (
         // Each CartItem must have an id labeled "key" because this helps
         // React identify which items have been added/removed/re-ordered
-        // within a list
+        // within a list.
         <CartItem 
         key={item.id} 
         name={item.name} 
@@ -65,15 +91,37 @@ const Cart = (props) => {
       </div>
   );
 
-  return (
-    <Modal onClose={props.onClose}>
+  // The content of the cart modal. Shown when we're not in the isSubmitting state.
+  const cartModalContent = (
+    <>
       <div>{cartItems}</div>
       <div className={classes.total}>
         <span>Total Amount</span>
         <span>{totalAmount}</span>
       </div>
-      {isCheckout && <Checkout onCancel={props.onClose} />}
+      {isCheckout && <Checkout onCancel={props.onClose} onSubmit={submitOrderHandler} />}
       {!isCheckout && modalActions}
+    </>
+  );
+
+  // The submitting modal. Shown when we're actively submitting.
+  const isSubmittingModalContent = (
+    <p>Sending order data. Please wait... </p>
+  );
+
+  // The modal that shows if we did submit successfully.
+  const didSubmitModalContent = (
+    <>
+      <p>We've received your order! You will recieve a notification when your order is complete.</p>
+      <button className={classes} onClick={props.onClose}>Close</button>
+    </>
+  );
+
+  return (
+    <Modal onClose={props.onClose}>
+      {isSubmitting && isSubmittingModalContent}
+      {!isSubmitting && !didSubmit && cartModalContent}
+      {!isSubmitting && didSubmit && didSubmitModalContent}
     </Modal>
   );
 };

@@ -78,6 +78,12 @@ const cartReducer = (state, action) => {
       totalAmount: updatedTotalAmount
     };
   };
+
+  // If we recieve this kind of action, we return a new state where our cart is empty.
+  if (action.type === 'CLEAR') {
+    return defaultCartState;
+  };
+
   return defaultCartState;
 };
 
@@ -120,11 +126,16 @@ const CartProvider = (props) => {
     dispatchCartAction({ type: "REMOVE_ITEM", id: idArgument });
   };
 
+  const clearCartHandler = () => {
+    dispatchCartAction({ type: "CLEAR"});
+  };
+
   const cartContext = {
     items: cartState.items,
     totalAmount: cartState.totalAmount,
     addItem: addItemToCartHandler,
     removeItem: removeItemFromCartHandler,
+    clearCart: clearCartHandler
   };
 
   // Passing cartContext to CartContext.Provider so that all of the

@@ -81,6 +81,16 @@ const Checkout = (props) => {
         // return in order to NOT continue with code execution.
         return;
     };
+
+    // Passing the user's entered data to the submitOrderHandler() function from our 
+    // Cart component where it takes the data and sends it to the backend database for 
+    // storage.
+    props.onSubmit({
+        name: enteredName,
+        street: enteredStreet,
+        city: enteredCity,
+        postalCode: enteredPostalCode
+    });
 };
 
   // useRef comes with a ref prop that we're using in each input component below. We use\
